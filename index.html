@@ -254,6 +254,7 @@
             font-weight: 500;
             margin-bottom: 20px;
             text-align: center;
+            line-height: 1.5;
         }
     </style>
 </head>
@@ -264,7 +265,8 @@
         </header>
 
         <div class="instructions">
-            💡 Dica: A escala inicia e encerra às 19h de segunda-feira. Clique em qualquer horário disponível para se inscrever.
+            💡 <strong>INÍCIO às 19h da segunda-feira e TÉRMINO às 19h da segunda-feira posterior.</strong><br>
+            Clique em qualquer horário disponível para se inscrever. Cada usuário gerencia apenas os seus próprios agendamentos.
         </div>
         
         <!-- Navegação de Meses -->
@@ -324,18 +326,17 @@
                     { t: "00:00 as 01:00", vigilia: true }, { t: "01:00 as 02:00", vigilia: true }
                 ];
 
-                // Função auxiliar para verificar se o horário está bloqueado na coluna correspondente
+                // Função auxiliar exata para verificar se o horário está bloqueado
                 function isHorarioBloqueado(colIndex, horaTexto) {
-                    // Extrai a hora inicial (ex: "02:00 as 03:00" -> hora 2)
                     let horaInicio = parseInt(horaTexto.split(':')[0]);
 
-                    // Coluna 0: Segunda (Início 19h). Horários anteriores a 19h (00:00 até 18:00) devem ser bloqueados.
+                    // Coluna 0: Segunda (Início 19h) -> Bloqueia horários antes das 19h (02h até 18h)
                     if (colIndex === 0) {
-                        if (horaInicio < 19) return true;
+                        if (horaInicio >= 2 && horaInicio < 19) return true;
                     }
-                    // Coluna 7: Segunda (Término 19h). Horários de 19:00 em diante (19:00 até 23:00 e 00:00 a 02:00) devem ser bloqueados, pois encerra às 19h.
+                    // Coluna 7: Segunda (Término 19h) -> Bloqueia horários a partir das 19h (19h até 01h)
                     if (colIndex === 7) {
-                        if (horaInicio >= 19 || horaInicio < 2) return true;
+                        if (horaInicio >= 19 || (horaInicio >= 0 && horaInicio < 2)) return true;
                     }
                     return false;
                 }
@@ -415,7 +416,6 @@
             meses.forEach(m => {
                 let mesData = cacheDados[m.id] || {};
                 
-                // Calcula o total de horários VÁLIDOS (não bloqueados) por coluna
                 let totalHorariosValidosPorColuna = {};
                 let preenchidosPorColuna = {};
 
@@ -468,7 +468,6 @@
                     });
                 });
 
-                // Atualiza os contadores de horários disponíveis considerando apenas as células válidas
                 diasSemana.forEach((_, cIdx) => {
                     let spanVagas = document.getElementById(`vagas-${m.id}-${cIdx}`);
                     if (spanVagas) {
