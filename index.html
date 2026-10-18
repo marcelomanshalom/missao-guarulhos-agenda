@@ -162,20 +162,20 @@
         <input type="text" id="searchBox" class="search-box" placeholder="Buscar evento (ex: Missa, Retiro, Violão)..." onkeyup="filterEvents()">
         
         <div class="months-nav" id="monthsNav">
-            <button class="month-btn active" onclick="showMonth('nov-2026')">Nov 2026</button>
-            <button class="month-btn" onclick="showMonth('dez-2026')">Dez 2026</button>
-            <button class="month-btn" onclick="showMonth('jan-2027')">Jan 2027</button>
-            <button class="month-btn" onclick="showMonth('fev-2027')">Fev 2027</button>
-            <button class="month-btn" onclick="showMonth('mar-2027')">Mar 2027</button>
-            <button class="month-btn" onclick="showMonth('abr-2027')">Abr 2027</button>
-            <button class="month-btn" onclick="showMonth('mai-2027')">Mai 2027</button>
-            <button class="month-btn" onclick="showMonth('jun-2027')">Jun 2027</button>
-            <button class="month-btn" onclick="showMonth('jul-2027')">Jul 2027</button>
-            <button class="month-btn" onclick="showMonth('ago-2027')">Ago 2027</button>
-            <button class="month-btn" onclick="showMonth('set-2027')">Set 2027</button>
-            <button class="month-btn" onclick="showMonth('out-2027')">Out 2027</button>
-            <button class="month-btn" onclick="showMonth('nov-2027')">Nov 2027</button>
-            <button class="month-btn" onclick="showMonth('dez-2027')">Dez 2027</button>
+            <button class="month-btn active" onclick="showMonth('nov-2026', this)">Nov 2026</button>
+            <button class="month-btn" onclick="showMonth('dez-2026', this)">Dez 2026</button>
+            <button class="month-btn" onclick="showMonth('jan-2027', this)">Jan 2027</button>
+            <button class="month-btn" onclick="showMonth('fev-2027', this)">Fev 2027</button>
+            <button class="month-btn" onclick="showMonth('mar-2027', this)">Mar 2027</button>
+            <button class="month-btn" onclick="showMonth('abr-2027', this)">Abr 2027</button>
+            <button class="month-btn" onclick="showMonth('mai-2027', this)">Mai 2027</button>
+            <button class="month-btn" onclick="showMonth('jun-2027', this)">Jun 2027</button>
+            <button class="month-btn" onclick="showMonth('jul-2027', this)">Jul 2027</button>
+            <button class="month-btn" onclick="showMonth('ago-2027', this)">Ago 2027</button>
+            <button class="month-btn" onclick="showMonth('set-2027', this)">Set 2027</button>
+            <button class="month-btn" onclick="showMonth('out-2027', this)">Out 2027</button>
+            <button class="month-btn" onclick="showMonth('nov-2027', this)">Nov 2027</button>
+            <button class="month-btn" onclick="showMonth('dez-2027', this)">Dez 2027</button>
         </div>
 
         <div id="contentContainer">
@@ -334,50 +334,54 @@
     </div>
 
     <script>
-        function showMonth(monthId) {
+        function showMonth(monthId, btnElement) {
             // Limpa o input de busca ao trocar de aba
             document.getElementById('searchBox').value = '';
             
-            // Remove a classe active de todas as seções e botões
+            // Oculta todas as seções e remove a classe active de todos os cards internos
             document.querySelectorAll('.month-section').forEach(section => {
                 section.classList.remove('active');
-                section.style.display = 'block'; // Reseta o display caso tenha sido filtrado
+                // Restaura a visibilidade de todos os cards caso tenham sido filtrados anteriormente
+                section.querySelectorAll('.event-card').forEach(card => {
+                    card.style.display = 'flex';
+                });
             });
+
+            // Remove a classe active de todos os botões do menu
             document.querySelectorAll('.month-btn').forEach(btn => {
                 btn.classList.remove('active');
             });
 
-            // Ativa o mês selecionado
+            // Ativa apenas a seção e o botão correspondentes
             document.getElementById(monthId).classList.add('active');
-            event.target.classList.add('active');
+            btnElement.classList.add('active');
         }
 
         function filterEvents() {
             let query = document.getElementById('searchBox').value.toLowerCase();
             let sections = document.querySelectorAll('.month-section');
-            let buttons = document.querySelectorAll('.month-btn');
 
             if (query.trim() === "") {
-                // Se a busca estiver vazia, restaura a aba ativa atual
+                // Se a busca estiver vazia, restaura o comportamento exibindo apenas a aba atualmente ativa
                 let activeBtn = document.querySelector('.month-btn.active');
                 let activeMonthId = activeBtn ? activeBtn.getAttribute('onclick').match(/'([^']+)'/)[1] : 'nov-2026';
                 
                 sections.forEach(sec => {
                     if (sec.id === activeMonthId) {
                         sec.classList.add('active');
-                        sec.style.display = 'block';
                     } else {
                         sec.classList.remove('active');
-                        sec.style.display = 'none';
                     }
+                    sec.querySelectorAll('.event-card').forEach(card => {
+                        card.style.display = 'flex';
+                    });
                 });
                 return;
             }
 
-            // Se houver texto na busca, exibe todos os meses e filtra os cards que contêm o texto
+            // Se houver texto na busca, exibe todas as seções e filtra os cards correspondentes
             sections.forEach(sec => {
                 sec.classList.add('active');
-                sec.style.display = 'block';
                 let cards = sec.querySelectorAll('.event-card');
                 let hasVisibleCard = false;
 
@@ -391,8 +395,10 @@
                     }
                 });
 
-                // Oculta o título do mês se nenhum evento dele corresponder à busca
-                sec.style.display = hasVisibleCard ? 'block' : 'none';
+                // Se nenhum card do mês bater com a busca, oculta a seção inteira
+                if (!hasVisibleCard) {
+                    sec.classList.remove('active');
+                }
             });
         }
     </script>
