@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Missão Guarulhos - Calendário</title>
+    <style>
+        :root {
+            --primary-color: #1a73e8;
+            --bg-color: #f8f9fa;
+            --card-bg: #ffffff;
+            --text-color: #202124;
+            --text-secondary: #5f6368;
+            --border-color: #dadce0;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+        .container {
+            width: 100%;
+            max-width: 700px;
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            padding: 30px;
+            box-sizing: border-box;
+        }
+        h1 {
+            font-size: 24px;
+            color: var(--primary-color);
+            margin-top: 0;
+            margin-bottom: 5px;
+            text-align: center;
+        }
+        .subtitle {
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 14px;
+            margin-bottom: 30px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 15px;
+        }
+        .event-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .event-card {
+            display: flex;
+            align-items: center;
+            background: #fff;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 14px 18px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .event-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+            border-color: var(--primary-color);
+        }
+        .event-date {
+            min-width: 130px;
+            font-weight: 600;
+            color: var(--primary-color);
+            font-size: 15px;
+            border-right: 2px solid var(--bg-color);
+            padding-right: 15px;
+        }
+        .event-title {
+            padding-left: 15px;
+            font-size: 16px;
+            color: var(--text-color);
+            font-weight: 500;
+            flex-grow: 1;
+        }
+        @media (max-width: 600px) {
+            .event-card {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 6px;
+            }
+            .event-date {
+                border-right: none;
+                padding-right: 0;
+                border-bottom: 1px solid var(--bg-color);
+                padding-bottom: 6px;
+                width: 100%;
+            }
+            .event-title {
+                padding-left: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Missão Guarulhos</h1>
+        <div class="subtitle">Agenda de Compromissos • 2026 - 2027</div>
+        
+        <div class="event-list">
+            <!-- Novembro de 2026 -->
+            <div class="event-card">
+                <div class="event-date">Quarta - 4/11</div>
+                <div class="event-title">Aniversário do Moysés</div>
+            </div>
+            <div class="event-card">
+                <div class="event-date">Sexta - 6/11</div>
+                <div class="event-title">Curso de Consagração à Nossa Senhora das Graças (Online)</div>
+            </div>
+            <div class="event-card">
+                <div class="event-date">Sexta - 6/11</div>
+                <div class="event-title">Retiro T2/T3 Célula São João da Cruz</div>
+            </div>
+            <div class="event-card">
+                <div class="event-date">Sábado - 7/11</div>
+                <div class="event-title">Aulas de violão</div>
+            </div>
+            <div class="event-card">
+                <div class="event-date">Domingo - 8/11</div>
+                <div class="event-title">8º Encontro Vocacional (Quero consagrar a minha vida)</div>
+            </div>
+            <div class="event-card">
+                <div class="event-date">Sexta - 13/11</div>
+                <div class="event-title">Curso de Consagração à Nossa Senhora das Graças (Online)</div>
+            </div>
+            <div class="event-card">
+                <div class="event-date">Sexta - 13/11</div>
+                <div class="event-title">Missa por cura</div>
+            </div>
+            <div class="event-card">
+                <div class="event-date">Sábado - 14/11</div>
+                <div class="event-title">Aulas de violão</div>
+            </div>
+            <div class="event-card">
+                <div class="event-date">Sábado - 14/11</div>
+                <div class="event-title">Lazer do Ministério - Intercessão Jovem</div>
+            </div>
+            <div class="event-card">
+                <div class="event-date">Sábado - 14/11</div>
+                <div class="event-title">Novena de Natal e Convivência - Intercessão Jovem</div>
+            </div>
+            <div class="event-card">
+                <div class="event-date">Domingo - 15/11</div>
+                <div class="event-title">Ação SOS de Rua</div>
+            </div>
+            <div class="event-card">
+                <div class="event-date">Domingo - 15/11</div>
+                <div class="event-title">Dia Mundial do Pobre</div>
+            </div>
+            <div class="event-card">
+                <div class="event-date">Sexta - 20/11</div>
+                <div class="event-title">Curso de Consagração à Nossa Senhora das Graças (Online)</div>
+            </div>
+            <div class="event-card">
+                <div class="event-date">Sábado - 21/11</div>
+                <div class="event-title">Aulas de violão</div>
+            </div>
+            <div class="event-card">
+                <div class="event-date">Segunda - 23/11</div>
+                <div class="event-title">Adoração Ininterrupta</div>
+            </div>
+            <div class="event-card">
+                <div class="event-date">Sexta - 27/11</div>
+                <div class="event-title">Missa de Consagração à Nossa das Graças</div>
+            </div>
+            <div class="event-card">
+                <div class="event-date">Sexta - 27/11</div>
+                <div class="event-title">Vigília Pastoreio de Adultos</div>
+            </div>
+            <div class="event-card">
+                <div class="event-date">Sábado - 28/11</div>
+                <div class="event-title">Aulas de violão</div>
+            </div>
+            <div class="event-card">
+                <div class="event-date">Sábado - 28/11</div>
+                <div class="event-title">Philia</div>
+            </div>
+            <div class="event-card">
+                <div class="event-date">Sábado - 28/11</div>
+                <div class="event-title">SVES Jovem</div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
