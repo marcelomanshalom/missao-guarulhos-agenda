@@ -3,149 +3,239 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Missão Guarulhos - Calendário 2026-2027</title>
+    <title>Missão Guarulhos - Agenda Oficial</title>
     <style>
         :root {
-            --primary-color: #1a73e8;
-            --primary-hover: #1557b0;
-            --bg-color: #f8f9fa;
+            --primary: #4f46e5;
+            --primary-hover: #4338ca;
+            --primary-light: #e0e7ff;
+            --bg-gradient: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
             --card-bg: #ffffff;
-            --text-color: #202124;
-            --text-secondary: #5f6368;
-            --border-color: #dadce0;
+            --text-main: #111827;
+            --text-secondary: #4b5563;
+            --border: #e5e7eb;
+            --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
         }
+
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background: var(--bg-gradient);
+            color: var(--text-main);
             margin: 0;
-            padding: 20px;
+            padding: 40px 20px;
             display: flex;
             justify-content: center;
+            min-height: 100vh;
+            box-sizing: border-box;
         }
+
         .container {
             width: 100%;
-            max-width: 800px;
+            max-width: 850px;
             background-color: var(--card-bg);
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-            padding: 30px;
-            box-sizing: border-box;
-        }
-        h1 {
-            font-size: 24px;
-            color: var(--primary-color);
-            margin-top: 0;
-            margin-bottom: 5px;
-            text-align: center;
-        }
-        .subtitle {
-            text-align: center;
-            color: var(--text-secondary);
-            font-size: 14px;
-            margin-bottom: 20px;
-            border-bottom: 1px solid var(--border-color);
-            padding-bottom: 15px;
-        }
-        .search-box {
-            width: 100%;
-            padding: 10px 15px;
-            font-size: 15px;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            margin-bottom: 20px;
-            box-sizing: border-box;
-            outline: none;
-            transition: border-color 0.2s;
-        }
-        .search-box:focus {
-            border-color: var(--primary-color);
-        }
-        .months-nav {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 6px;
-            justify-content: center;
-            margin-bottom: 25px;
-        }
-        .month-btn {
-            background-color: #f1f3f4;
-            border: none;
             border-radius: 20px;
-            padding: 8px 14px;
-            font-size: 13px;
-            font-weight: 500;
-            color: var(--text-secondary);
-            cursor: pointer;
-            transition: all 0.2s;
+            box-shadow: var(--shadow);
+            padding: 40px;
+            box-sizing: border-box;
+            border: 1px solid rgba(255, 255, 255, 0.8);
         }
-        .month-btn:hover {
-            background-color: #e8eaed;
-        }
-        .month-btn.active {
-            background-color: var(--primary-color);
-            color: white;
-        }
-        .month-section {
-            display: none;
+
+        header {
+            text-align: center;
             margin-bottom: 30px;
         }
+
+        h1 {
+            font-size: 28px;
+            color: var(--text-main);
+            margin: 0 0 8px 0;
+            font-weight: 800;
+            letter-spacing: -0.025em;
+        }
+
+        .subtitle {
+            color: var(--text-secondary);
+            font-size: 15px;
+            font-weight: 500;
+        }
+
+        .search-container {
+            position: relative;
+            margin-bottom: 25px;
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 14px 20px 14px 45px;
+            font-size: 15px;
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            background-color: #f9fafb;
+            color: var(--text-main);
+            box-sizing: border-box;
+            outline: none;
+            transition: all 0.25s ease;
+        }
+
+        .search-box:focus {
+            border-color: var(--primary);
+            background-color: #fff;
+            box-shadow: 0 0 0 4px var(--primary-light);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #9ca3af;
+            font-size: 18px;
+            pointer-events: none;
+        }
+
+        /* Navegação por Meses (Chips Modernos) */
+        .months-nav {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding-bottom: 12px;
+            margin-bottom: 30px;
+            scrollbar-width: thin;
+            scrollbar-color: var(--border) transparent;
+        }
+
+        .months-nav::-webkit-scrollbar {
+            height: 6px;
+        }
+
+        .months-nav::-webkit-scrollbar-thumb {
+            background-color: var(--border);
+            border-radius: 10px;
+        }
+
+        .month-btn {
+            background-color: #f3f4f6;
+            border: none;
+            border-radius: 10px;
+            padding: 10px 16px;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.2s ease;
+        }
+
+        .month-btn:hover {
+            background-color: #e5e7eb;
+            color: var(--text-main);
+        }
+
+        .month-btn.active {
+            background-color: var(--primary);
+            color: white;
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+        }
+
+        /* Seções de Meses */
+        .month-section {
+            display: none;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
         .month-section.active {
             display: block;
         }
-        .month-title {
-            font-size: 18px;
-            font-weight: 600;
-            color: var(--primary-color);
-            margin-bottom: 12px;
-            border-bottom: 2px solid var(--bg-color);
-            padding-bottom: 6px;
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
         }
+
+        .month-header-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .event-count {
+            font-size: 13px;
+            background-color: var(--primary-light);
+            color: var(--primary);
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-weight: 600;
+        }
+
         .event-list {
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 12px;
         }
+
         .event-card {
             display: flex;
             align-items: center;
             background: #fff;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 12px 16px;
-            transition: transform 0.2s, box-shadow 0.2s;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 16px 20px;
+            transition: all 0.2s ease;
         }
+
         .event-card:hover {
             transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
-            border-color: var(--primary-color);
+            box-shadow: 0 10px 20px -5px rgba(0,0,0,0.05);
+            border-color: #cbd5e1;
         }
+
         .event-date {
-            min-width: 130px;
-            font-weight: 600;
-            color: var(--primary-color);
+            min-width: 140px;
+            font-weight: 700;
+            color: var(--primary);
             font-size: 14px;
-            border-right: 2px solid var(--bg-color);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            border-right: 2px solid #f3f4f6;
             padding-right: 15px;
         }
+
         .event-title {
-            padding-left: 15px;
+            padding-left: 20px;
             font-size: 15px;
-            color: var(--text-color);
+            color: var(--text-main);
             font-weight: 500;
             flex-grow: 1;
+            line-height: 1.4;
         }
+
+        .no-results {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-secondary);
+            font-size: 15px;
+            display: none;
+        }
+
         @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
             .event-card {
                 flex-direction: column;
                 align-items: flex-start;
-                gap: 6px;
+                gap: 8px;
             }
             .event-date {
                 border-right: none;
                 padding-right: 0;
-                border-bottom: 1px solid var(--bg-color);
-                padding-bottom: 6px;
+                border-bottom: 1px solid #f3f4f6;
+                padding-bottom: 8px;
                 width: 100%;
             }
             .event-title {
@@ -156,10 +246,15 @@
 </head>
 <body>
     <div class="container">
-        <h1>Missão Guarulhos</h1>
-        <div class="subtitle">Agenda Oficial de Compromissos • 2026 - 2027</div>
+        <header>
+            <h1>Missão Guarulhos</h1>
+            <div class="subtitle">Agenda Oficial de Compromissos • 2026 - 2027</div>
+        </header>
         
-        <input type="text" id="searchBox" class="search-box" placeholder="Buscar evento (ex: Missa, Retiro, Violão)..." onkeyup="filterEvents()">
+        <div class="search-container">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="searchBox" class="search-box" placeholder="Pesquisar evento por nome (ex: Missa, Retiro, Violão)..." onkeyup="filterEvents()">
+        </div>
         
         <div class="months-nav" id="monthsNav">
             <button class="month-btn active" onclick="showMonth('nov-2026', this)">Nov 2026</button>
@@ -181,7 +276,9 @@
         <div id="contentContainer">
             <!-- NOVEMBRO 2026 -->
             <div id="nov-2026" class="month-section active">
-                <div class="month-title">Novembro de 2026</div>
+                <div class="month-h-wrap">
+                    <div class="month-header-title">Novembro de 2026 <span class="event-count">20 eventos</span></div>
+                </div>
                 <div class="event-list">
                     <div class="event-card"><div class="event-date">Quarta - 4/11</div><div class="event-title">Aniversário do Moysés</div></div>
                     <div class="event-card"><div class="event-date">Sexta - 6/11</div><div class="event-title">Curso de Consagração à Nossa Senhora das Graças (Online)</div></div>
@@ -208,7 +305,7 @@
 
             <!-- DEZEMBRO 2026 -->
             <div id="dez-2026" class="month-section">
-                <div class="month-title">Dezembro de 2026</div>
+                <div class="month-header-title">Dezembro de 2026 <span class="event-count">13 eventos</span></div>
                 <div class="event-list">
                     <div class="event-card"><div class="event-date">Terça - 1/12</div><div class="event-title">Férias da CV</div></div>
                     <div class="event-card"><div class="event-date">Sábado - 5/12</div><div class="event-title">Aulas de violão</div></div>
@@ -228,7 +325,7 @@
 
             <!-- JANEIRO 2027 -->
             <div id="jan-2027" class="month-section">
-                <div class="month-title">Janeiro de 2027</div>
+                <div class="month-header-title">Janeiro de 2027 <span class="event-count">4 eventos</span></div>
                 <div class="event-list">
                     <div class="event-card"><div class="event-date">Sábado - 2/01</div><div class="event-title">Dê suas férias pra Jesus</div></div>
                     <div class="event-card"><div class="event-date">Sexta - 8/01</div><div class="event-title">Missa por cura</div></div>
@@ -239,7 +336,7 @@
 
             <!-- FEVEREIRO 2027 -->
             <div id="fev-2027" class="month-section">
-                <div class="month-title">Fevereiro de 2027</div>
+                <div class="month-header-title">Fevereiro de 2027 <span class="event-count">4 eventos</span></div>
                 <div class="event-list">
                     <div class="event-card"><div class="event-date">Domingo - 31/01</div><div class="event-title">Corrida da Paz - Shalom Guarulhos 25 Anos</div></div>
                     <div class="event-card"><div class="event-date">Domingo - 7/02</div><div class="event-title">RENASCER</div></div>
@@ -250,7 +347,7 @@
 
             <!-- MARÇO 2027 -->
             <div id="mar-2027" class="month-section">
-                <div class="month-title">Março de 2027</div>
+                <div class="month-header-title">Março de 2027 <span class="event-count">3 eventos</span></div>
                 <div class="event-list">
                     <div class="event-card"><div class="event-date">Sábado - 6/03</div><div class="event-title">Assembléia Jovem</div></div>
                     <div class="event-card"><div class="event-date">Sexta - 12/03</div><div class="event-title">Missa por cura</div></div>
@@ -260,7 +357,7 @@
 
             <!-- ABRIL 2027 -->
             <div id="abr-2027" class="month-section">
-                <div class="month-title">Abril de 2027</div>
+                <div class="month-header-title">Abril de 2027 <span class="event-count">1 evento</span></div>
                 <div class="event-list">
                     <div class="event-card"><div class="event-date">Sexta - 9/04</div><div class="event-title">Missa por cura</div></div>
                 </div>
@@ -268,7 +365,7 @@
 
             <!-- MAIO 2027 -->
             <div id="mai-2027" class="month-section">
-                <div class="month-title">Maio de 2027</div>
+                <div class="month-header-title">Maio de 2027 <span class="event-count">1 evento</span></div>
                 <div class="event-list">
                     <div class="event-card"><div class="event-date">Sexta - 14/05</div><div class="event-title">Missa por cura</div></div>
                 </div>
@@ -276,7 +373,7 @@
 
             <!-- JUNHO 2027 -->
             <div id="jun-2027" class="month-section">
-                <div class="month-title">Junho de 2027</div>
+                <div class="month-header-title">Junho de 2027 <span class="event-count">1 evento</span></div>
                 <div class="event-list">
                     <div class="event-card"><div class="event-date">Sexta - 11/06</div><div class="event-title">Missa por cura</div></div>
                 </div>
@@ -284,7 +381,7 @@
 
             <!-- JULHO 2027 -->
             <div id="jul-2027" class="month-section">
-                <div class="month-title">Julho de 2027</div>
+                <div class="month-header-title">Julho de 2027 <span class="event-count">1 evento</span></div>
                 <div class="event-list">
                     <div class="event-card"><div class="event-date">Sexta - 9/07</div><div class="event-title">Missa por cura</div></div>
                 </div>
@@ -292,7 +389,7 @@
 
             <!-- AGOSTO 2027 -->
             <div id="ago-2027" class="month-section">
-                <div class="month-title">Agosto de 2027</div>
+                <div class="month-header-title">Agosto de 2027 <span class="event-count">1 evento</span></div>
                 <div class="event-list">
                     <div class="event-card"><div class="event-date">Sexta - 13/08</div><div class="event-title">Missa por cura</div></div>
                 </div>
@@ -300,7 +397,7 @@
 
             <!-- SETEMBRO 2027 -->
             <div id="set-2027" class="month-section">
-                <div class="month-title">Setembro de 2027</div>
+                <div class="month-header-title">Setembro de 2027 <span class="event-count">1 evento</span></div>
                 <div class="event-list">
                     <div class="event-card"><div class="event-date">Sexta - 10/09</div><div class="event-title">Missa por cura</div></div>
                 </div>
@@ -308,7 +405,7 @@
 
             <!-- OUTUBRO 2027 -->
             <div id="out-2027" class="month-section">
-                <div class="month-title">Outubro de 2027</div>
+                <div class="month-header-title">Outubro de 2027 <span class="event-count">1 evento</span></div>
                 <div class="event-list">
                     <div class="event-card"><div class="event-date">Sexta - 8/10</div><div class="event-title">Missa por cura</div></div>
                 </div>
@@ -316,7 +413,7 @@
 
             <!-- NOVEMBRO 2027 -->
             <div id="nov-2027" class="month-section">
-                <div class="month-title">Novembro de 2027</div>
+                <div class="month-header-title">Novembro de 2027 <span class="event-count">2 eventos</span></div>
                 <div class="event-list">
                     <div class="event-card"><div class="event-date">Quinta - 4/11</div><div class="event-title">Aniversário do Moysés</div></div>
                     <div class="event-card"><div class="event-date">Sexta - 12/11</div><div class="event-title">Missa por cura</div></div>
@@ -325,82 +422,109 @@
 
             <!-- DEZEMBRO 2027 -->
             <div id="dez-2027" class="month-section">
-                <div class="month-title">Dezembro de 2027</div>
+                <div class="month-header-title">Dezembro de 2027 <span class="event-count">1 evento</span></div>
                 <div class="event-list">
                     <div class="event-card"><div class="event-date">Sexta - 10/12</div><div class="event-title">Missa por cura</div></div>
                 </div>
             </div>
+            
+            <div id="noResults" class="no-results">Nenhum evento encontrado para esta pesquisa.</div>
         </div>
     </div>
 
     <script>
         function showMonth(monthId, btnElement) {
-            // Limpa o input de busca ao trocar de aba
+            // Limpa a busca para evitar conflitos de exibição
             document.getElementById('searchBox').value = '';
             
-            // Oculta todas as seções e remove a classe active de todos os cards internos
+            // Oculta todas as seções de meses
             document.querySelectorAll('.month-section').forEach(section => {
                 section.classList.remove('active');
-                // Restaura a visibilidade de todos os cards caso tenham sido filtrados anteriormente
-                section.querySelectorAll('.event-card').forEach(card => {
-                    card.style.display = 'flex';
-                });
+                section.style.display = 'none';
+                section.querySelectorAll('.event-card').forEach(card => card.style.display = 'flex');
             });
 
-            // Remove a classe active de todos os botões do menu
+            // Remove o destaque de todos os botões do menu superior
             document.querySelectorAll('.month-btn').forEach(btn => {
                 btn.classList.remove('active');
             });
 
-            // Ativa apenas a seção e o botão correspondentes
-            document.getElementById(monthId).classList.add('active');
-            btnElement.classList.add('active');
+            // Exibe estritamente o mês selecionado
+            const targetSection = document.getElementById(monthId);
+            if (targetSection) {
+                targetSection.classList.add('active');
+                targetSection.style.display = 'block';
+            }
+            
+            // Ativa visualmente o botão clicado
+            if (btnElement) {
+                btnElement.classList.add('active');
+            }
+            
+            document.getElementById('noResults').style.display = 'none';
         }
 
         function filterEvents() {
-            let query = document.getElementById('searchBox').value.toLowerCase();
+            let query = document.getElementById('searchBox').value.toLowerCase().trim();
             let sections = document.querySelectorAll('.month-section');
+            let noResults = document.getElementById('noResults');
+            let totalVisible = 0;
 
-            if (query.trim() === "") {
-                // Se a busca estiver vazia, restaura o comportamento exibindo apenas a aba atualmente ativa
+            if (query === "") {
+                // Se a barra de busca for limpa, retorna à aba que estava ativa no menu superior
+                noResults.style.display = 'none';
                 let activeBtn = document.querySelector('.month-btn.active');
                 let activeMonthId = activeBtn ? activeBtn.getAttribute('onclick').match(/'([^']+)'/)[1] : 'nov-2026';
                 
                 sections.forEach(sec => {
                     if (sec.id === activeMonthId) {
                         sec.classList.add('active');
+                        sec.style.display = 'block';
                     } else {
                         sec.classList.remove('active');
+                        sec.style.display = 'none';
                     }
-                    sec.querySelectorAll('.event-card').forEach(card => {
-                        card.style.display = 'flex';
-                    });
+                    sec.querySelectorAll('.event-card').forEach(card => card.style.display = 'flex');
                 });
                 return;
             }
 
-            // Se houver texto na busca, exibe todas as seções e filtra os cards correspondentes
+            // Quando houver termo de busca, vasculha e exibe os resultados em todos os meses
             sections.forEach(sec => {
-                sec.classList.add('active');
                 let cards = sec.querySelectorAll('.event-card');
-                let hasVisibleCard = false;
+                let hasVisibleCardInMonth = false;
 
                 cards.forEach(card => {
                     let text = card.innerText.toLowerCase();
                     if (text.includes(query)) {
                         card.style.display = 'flex';
-                        hasVisibleCard = true;
+                        hasVisibleCardInMonth = true;
+                        totalVisible++;
                     } else {
                         card.style.display = 'none';
                     }
                 });
 
-                // Se nenhum card do mês bater com a busca, oculta a seção inteira
-                if (!hasVisibleCard) {
+                if (hasVisibleCardInMonth) {
+                    sec.classList.add('active');
+                    sec.style.display = 'block';
+                } else {
                     sec.classList.remove('active');
+                    sec.style.display = 'none';
                 }
             });
+
+            noResults.style.display = totalVisible === 0 ? 'block' : 'none';
         }
+
+        // Inicializa forçando a exibição correta apenas do primeiro mês padrão (Nov 2026)
+        window.onload = function() {
+            document.querySelectorAll('.month-section').forEach(sec => {
+                if(!sec.classList.contains('active')) {
+                    sec.style.display = 'none';
+                }
+            });
+        };
     </script>
 </body>
 </html>
