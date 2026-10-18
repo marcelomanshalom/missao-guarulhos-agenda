@@ -33,7 +33,7 @@
             background: var(--bg-gradient);
             color: var(--text-main);
             margin: 0;
-            padding: 30px 15px;
+            padding: 20px 10px;
             min-height: 100vh;
             box-sizing: border-box;
         }
@@ -45,18 +45,18 @@
             background-color: var(--card-bg);
             border-radius: 20px;
             box-shadow: var(--shadow);
-            padding: 30px;
+            padding: 20px;
             box-sizing: border-box;
             border: 1px solid rgba(255, 255, 255, 0.8);
         }
 
         header {
             text-align: center;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
         }
 
         h1 {
-            font-size: 26px;
+            font-size: 24px;
             color: var(--text-main);
             margin: 0;
             font-weight: 800;
@@ -68,7 +68,7 @@
             gap: 8px;
             overflow-x: auto;
             padding-bottom: 10px;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
             justify-content: center;
             scrollbar-width: thin;
         }
@@ -118,15 +118,16 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Contêiner da Tabela com Rolagem e Congelamentos */
+        /* Contêiner com rolagem sincronizada para congelar cabeçalho e coluna */
         .table-responsive {
             width: 100%;
-            max-height: 650px;
-            overflow-y: auto;
-            overflow-x: auto;
+            height: 70vh;
+            max-height: 600px;
+            overflow: auto;
             border-radius: 12px;
             border: 1px solid var(--border);
             margin-top: 10px;
+            background-color: white;
             position: relative;
         }
 
@@ -136,22 +137,22 @@
             border-spacing: 0;
             text-align: left;
             font-size: 13px;
-            background-color: white;
         }
 
         th, td {
             padding: 10px 12px;
             border-bottom: 1px solid var(--border);
             border-right: 1px solid var(--border);
+            background-color: white;
         }
 
         th:last-child, td:last-child {
             border-right: none;
         }
 
-        /* Congela o Cabeçalho (Dias da Semana) ao rolar para baixo */
+        /* Congela Cabeçalho (Dias da Semana) ao rolar para baixo */
         th {
-            background-color: #f8fafc;
+            background-color: #f8fafc !important;
             color: var(--text-main);
             font-weight: 700;
             text-align: center;
@@ -161,32 +162,34 @@
             z-index: 10;
         }
 
-        /* Congela a Coluna de Horários ao rolar para o lado */
+        /* Congela Coluna Lateral (Horários) ao rolar para o lado */
         .time-col {
             font-weight: 600;
             color: var(--primary);
-            background-color: #f8fafc;
+            background-color: #f8fafc !important;
             text-align: center;
             white-space: nowrap;
-            width: 140px;
+            width: 130px;
             position: sticky;
             left: 0;
             z-index: 5;
             border-right: 2px solid var(--border);
         }
 
-        /* Garante que o canto superior esquerdo (cabeçalho de horários) tenha prioridade máxima de sobreposição */
+        /* Canto superior esquerdo (Cruzamento de Horários com o cabeçalho) - Fica travado em cima e na esquerda */
         thead th:first-child {
+            position: sticky;
             left: 0;
+            top: 0;
             z-index: 20;
-            background-color: #f8fafc;
+            background-color: #f8fafc !important;
         }
 
         tr.vigilia-row td {
             background-color: var(--vigilia-bg);
         }
         tr.vigilia-row .time-col {
-            background-color: #fee2e2;
+            background-color: #fee2e2 !important;
             color: var(--vigilia-text);
         }
 
