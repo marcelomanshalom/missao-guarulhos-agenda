@@ -3,18 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Missão Guarulhos - Agenda Oficial</title>
+    <title>Missão Guarulhos - Adoração Ininterrupta</title>
+    
+    <!-- Firebase SDK (Google Firestore) -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+
     <style>
         :root {
             --primary: #4f46e5;
             --primary-hover: #4338ca;
             --primary-light: #e0e7ff;
-            --bg-gradient: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+            --bg-gradient: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
             --card-bg: #ffffff;
-            --text-main: #111827;
-            --text-secondary: #4b5563;
-            --border: #e5e7eb;
+            --text-main: #0f172a;
+            --text-secondary: #475569;
+            --border: #cbd5e1;
             --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+            --vigilia-bg: #fef2f2;
+            --vigilia-text: #991b1b;
+            --locked-bg: #e2e8f0;
+            --locked-text: #94a3b8;
+            --disabled-cell-bg: #f1f5f9;
+            --disabled-cell-text: #94a3b8;
         }
 
         body {
@@ -22,103 +33,52 @@
             background: var(--bg-gradient);
             color: var(--text-main);
             margin: 0;
-            padding: 40px 20px;
-            display: flex;
-            justify-content: center;
+            padding: 30px 15px;
             min-height: 100vh;
             box-sizing: border-box;
         }
 
         .container {
             width: 100%;
-            max-width: 850px;
+            max-width: 1350px;
+            margin: 0 auto;
             background-color: var(--card-bg);
             border-radius: 20px;
             box-shadow: var(--shadow);
-            padding: 40px;
+            padding: 30px;
             box-sizing: border-box;
             border: 1px solid rgba(255, 255, 255, 0.8);
         }
 
         header {
             text-align: center;
-            margin-bottom: 30px;
-        }
-
-        h1 {
-            font-size: 28px;
-            color: var(--text-main);
-            margin: 0 0 8px 0;
-            font-weight: 800;
-            letter-spacing: -0.025em;
-        }
-
-        .subtitle {
-            color: var(--text-secondary);
-            font-size: 15px;
-            font-weight: 500;
-        }
-
-        .search-container {
-            position: relative;
             margin-bottom: 25px;
         }
 
-        .search-box {
-            width: 100%;
-            padding: 14px 20px 14px 45px;
-            font-size: 15px;
-            border: 2px solid var(--border);
-            border-radius: 12px;
-            background-color: #f9fafb;
+        h1 {
+            font-size: 26px;
             color: var(--text-main);
-            box-sizing: border-box;
-            outline: none;
-            transition: all 0.25s ease;
+            margin: 0;
+            font-weight: 800;
         }
 
-        .search-box:focus {
-            border-color: var(--primary);
-            background-color: #fff;
-            box-shadow: 0 0 0 4px var(--primary-light);
-        }
-
-        .search-icon {
-            position: absolute;
-            left: 16px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #9ca3af;
-            font-size: 18px;
-            pointer-events: none;
-        }
-
-        /* Navegação por Meses (Chips Modernos) */
+        /* Navegação por Meses */
         .months-nav {
             display: flex;
             gap: 8px;
             overflow-x: auto;
-            padding-bottom: 12px;
-            margin-bottom: 30px;
+            padding-bottom: 10px;
+            margin-bottom: 25px;
+            justify-content: center;
             scrollbar-width: thin;
-            scrollbar-color: var(--border) transparent;
-        }
-
-        .months-nav::-webkit-scrollbar {
-            height: 6px;
-        }
-
-        .months-nav::-webkit-scrollbar-thumb {
-            background-color: var(--border);
-            border-radius: 10px;
         }
 
         .month-btn {
-            background-color: #f3f4f6;
+            background-color: #f1f5f9;
             border: none;
-            border-radius: 10px;
+            border-radius: 12px;
             padding: 10px 16px;
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 600;
             color: var(--text-secondary);
             cursor: pointer;
@@ -126,8 +86,8 @@
             transition: all 0.2s ease;
         }
 
-        .month-btn:hover {
-            background-color: #e5e7eb;
+        .month-btn:hover:not(:disabled) {
+            background-color: #e2e8f0;
             color: var(--text-main);
         }
 
@@ -137,7 +97,13 @@
             box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
         }
 
-        /* Seções de Meses */
+        .month-btn:disabled {
+            background-color: var(--locked-bg);
+            color: var(--locked-text);
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
         .month-section {
             display: none;
             animation: fadeIn 0.3s ease-in-out;
@@ -152,378 +118,446 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        .month-header-title {
-            font-size: 20px;
-            font-weight: 700;
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            margin-top: 10px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 13px;
+            background-color: white;
+        }
+
+        th, td {
+            padding: 10px 12px;
+            border-bottom: 1px solid var(--border);
+            border-right: 1px solid var(--border);
+        }
+
+        th:last-child, td:last-child {
+            border-right: none;
+        }
+
+        th {
+            background-color: #f8fafc;
             color: var(--text-main);
-            margin-bottom: 16px;
+            font-weight: 700;
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        .vagas-counter {
+            display: block;
+            font-size: 11px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            margin-top: 3px;
+            opacity: 0.85;
+        }
+
+        .time-col {
+            font-weight: 600;
+            color: var(--primary);
+            background-color: #f8fafc;
+            text-align: center;
+            white-space: nowrap;
+            width: 140px;
+        }
+
+        tr.vigilia-row td {
+            background-color: var(--vigilia-bg);
+        }
+        tr.vigilia-row .time-col {
+            background-color: #fee2e2;
+            color: var(--vigilia-text);
+        }
+
+        .slot-cell {
+            cursor: pointer;
+            transition: background-color 0.15s;
+            text-align: center;
+            vertical-align: middle;
+            min-width: 110px;
+        }
+
+        .slot-cell:hover {
+            background-color: #f1f5f9;
+        }
+
+        /* Estilo para células bloqueadas fora do período oficial da escala */
+        .slot-cell.blocked-cell {
+            background-color: var(--disabled-cell-bg);
+            cursor: not-allowed;
+            color: var(--disabled-cell-text);
+            font-size: 11px;
+            font-style: italic;
+        }
+
+        .slot-cell.blocked-cell:hover {
+            background-color: var(--disabled-cell-bg);
+        }
+
+        .participant-tags {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            align-items: center;
+        }
+
+        .tag {
+            background-color: var(--primary-light);
+            color: var(--primary);
+            padding: 5px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
             display: flex;
             align-items: center;
             justify-content: space-between;
+            gap: 8px;
+            width: 100%;
+            box-sizing: border-box;
+            word-break: break-word;
         }
 
-        .event-count {
+        .tag span {
+            flex-grow: 1;
+            text-align: left;
+        }
+
+        .tag button {
+            background: none;
+            border: none;
+            color: #ef4444;
+            cursor: pointer;
+            font-weight: bold;
             font-size: 13px;
+            padding: 0 2px;
+        }
+
+        .tag button:hover {
+            color: #b91c1c;
+        }
+
+        .instructions {
             background-color: var(--primary-light);
             color: var(--primary);
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-weight: 600;
-        }
-
-        .event-list {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .event-card {
-            display: flex;
-            align-items: center;
-            background: #fff;
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 16px 20px;
-            transition: all 0.2s ease;
-        }
-
-        .event-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px -5px rgba(0,0,0,0.05);
-            border-color: #cbd5e1;
-        }
-
-        .event-date {
-            min-width: 140px;
-            font-weight: 700;
-            color: var(--primary);
-            font-size: 14px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            border-right: 2px solid #f3f4f6;
-            padding-right: 15px;
-        }
-
-        .event-title {
-            padding-left: 20px;
-            font-size: 15px;
-            color: var(--text-main);
+            padding: 12px 16px;
+            border-radius: 10px;
+            font-size: 13px;
             font-weight: 500;
-            flex-grow: 1;
-            line-height: 1.4;
-        }
-
-        .no-results {
+            margin-bottom: 20px;
             text-align: center;
-            padding: 40px;
-            color: var(--text-secondary);
-            font-size: 15px;
-            display: none;
-        }
-
-        @media (max-width: 600px) {
-            .container {
-                padding: 20px;
-            }
-            .event-card {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 8px;
-            }
-            .event-date {
-                border-right: none;
-                padding-right: 0;
-                border-bottom: 1px solid #f3f4f6;
-                padding-bottom: 8px;
-                width: 100%;
-            }
-            .event-title {
-                padding-left: 0;
-            }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>Missão Guarulhos</h1>
-            <div class="subtitle">Agenda Oficial de Compromissos • 2026 - 2027</div>
+            <h1>Missão Guarulhos - Adoração Ininterrupta</h1>
         </header>
-        
-        <div class="search-container">
-            <span class="search-icon">🔍</span>
-            <input type="text" id="searchBox" class="search-box" placeholder="Pesquisar evento por nome (ex: Missa, Retiro, Violão)..." onkeyup="filterEvents()">
+
+        <div class="instructions">
+            💡 Dica: A escala inicia e encerra às 19h de segunda-feira. Clique em qualquer horário disponível para se inscrever.
         </div>
         
+        <!-- Navegação de Meses -->
         <div class="months-nav" id="monthsNav">
-            <button class="month-btn active" onclick="showMonth('nov-2026', this)">Nov 2026</button>
-            <button class="month-btn" onclick="showMonth('dez-2026', this)">Dez 2026</button>
-            <button class="month-btn" onclick="showMonth('jan-2027', this)">Jan 2027</button>
-            <button class="month-btn" onclick="showMonth('fev-2027', this)">Fev 2027</button>
-            <button class="month-btn" onclick="showMonth('mar-2027', this)">Mar 2027</button>
-            <button class="month-btn" onclick="showMonth('abr-2027', this)">Abr 2027</button>
-            <button class="month-btn" onclick="showMonth('mai-2027', this)">Mai 2027</button>
-            <button class="month-btn" onclick="showMonth('jun-2027', this)">Jun 2027</button>
-            <button class="month-btn" onclick="showMonth('jul-2027', this)">Jul 2027</button>
-            <button class="month-btn" onclick="showMonth('ago-2027', this)">Ago 2027</button>
-            <button class="month-btn" onclick="showMonth('set-2027', this)">Set 2027</button>
-            <button class="month-btn" onclick="showMonth('out-2027', this)">Out 2027</button>
-            <button class="month-btn" onclick="showMonth('nov-2027', this)">Nov 2027</button>
-            <button class="month-btn" onclick="showMonth('dez-2027', this)">Dez 2027</button>
+            <script>
+                const meses = [
+                    { id: 'jan-2026', nome: 'Janeiro de 2026', ano: 2026, mesIndex: 0 }, 
+                    { id: 'fev-2026', nome: 'Fevereiro de 2026', ano: 2026, mesIndex: 1 },
+                    { id: 'mar-2026', nome: 'Março de 2026', ano: 2026, mesIndex: 2 }, 
+                    { id: 'abr-2026', nome: 'Abril de 2026', ano: 2026, mesIndex: 3 },
+                    { id: 'mai-2026', nome: 'Maio de 2026', ano: 2026, mesIndex: 4 }, 
+                    { id: 'jun-2026', nome: 'Junho de 2026', ano: 2026, mesIndex: 5 },
+                    { id: 'jul-2026', nome: 'Julho de 2026', ano: 2026, mesIndex: 6 }, 
+                    { id: 'ago-2026', nome: 'Agosto de 2026', ano: 2026, mesIndex: 7 },
+                    { id: 'set-2026', nome: 'Setembro de 2026', ano: 2026, mesIndex: 8 }, 
+                    { id: 'out-2026', nome: 'Outubro de 2026', ano: 2026, mesIndex: 9 },
+                    { id: 'nov-2026', nome: 'Novembro de 2026', ano: 2026, mesIndex: 10 }, 
+                    { id: 'dez-2026', nome: 'Dezembro de 2026', ano: 2026, mesIndex: 11 },
+                    { id: 'jan-2027', nome: 'Janeiro de 2027', ano: 2027, mesIndex: 0 }, 
+                    { id: 'fev-2027', nome: 'Fevereiro de 2027', ano: 2027, mesIndex: 1 },
+                    { id: 'mar-2027', nome: 'Março de 2027', ano: 2027, mesIndex: 2 }, 
+                    { id: 'abr-2027', nome: 'Abril de 2027', ano: 2027, mesIndex: 3 },
+                    { id: 'mai-2027', nome: 'Maio de 2027', ano: 2027, mesIndex: 4 }, 
+                    { id: 'jun-2027', nome: 'Junho de 2027', ano: 2027, mesIndex: 5 },
+                    { id: 'jul-2027', nome: 'Julho de 2027', ano: 2027, mesIndex: 6 }, 
+                    { id: 'ago-2027', nome: 'Agosto de 2027', ano: 2027, mesIndex: 7 },
+                    { id: 'set-2027', nome: 'Setembro de 2027', ano: 2027, mesIndex: 8 }, 
+                    { id: 'out-2027', nome: 'Outubro de 2027', ano: 2027, mesIndex: 9 },
+                    { id: 'nov-2027', nome: 'Novembro de 2027', ano: 2027, mesIndex: 10 }, 
+                    { id: 'dez-2027', nome: 'Dezembro de 2027', ano: 2027, mesIndex: 11 }
+                ];
+
+                document.write(meses.map((m, index) => `
+                    <button class="month-btn ${index === 0 ? 'active' : ''}" id="btn-${m.id}" onclick="showMonth('${m.id}', this)">${m.nome.split(' ')[0]} ${m.ano}</button>
+                `).join(''));
+            </script>
         </div>
 
         <div id="contentContainer">
-            <!-- NOVEMBRO 2026 -->
-            <div id="nov-2026" class="month-section active">
-                <div class="month-h-wrap">
-                    <div class="month-header-title">Novembro de 2026 <span class="event-count">20 eventos</span></div>
-                </div>
-                <div class="event-list">
-                    <div class="event-card"><div class="event-date">Quarta - 4/11</div><div class="event-title">Aniversário do Moysés</div></div>
-                    <div class="event-card"><div class="event-date">Sexta - 6/11</div><div class="event-title">Curso de Consagração à Nossa Senhora das Graças (Online)</div></div>
-                    <div class="event-card"><div class="event-date">Sexta - 6/11</div><div class="event-title">Retiro T2/T3 Célula São João da Cruz</div></div>
-                    <div class="event-card"><div class="event-date">Sábado - 7/11</div><div class="event-title">Aulas de violão</div></div>
-                    <div class="event-card"><div class="event-date">Domingo - 8/11</div><div class="event-title">8º Encontro Vocacional (Quero consagrar a minha vida)</div></div>
-                    <div class="event-card"><div class="event-date">Sexta - 13/11</div><div class="event-title">Curso de Consagração à Nossa Senhora das Graças (Online)</div></div>
-                    <div class="event-card"><div class="event-date">Sexta - 13/11</div><div class="event-title">Missa por cura</div></div>
-                    <div class="event-card"><div class="event-date">Sábado - 14/11</div><div class="event-title">Aulas de violão</div></div>
-                    <div class="event-card"><div class="event-date">Sábado - 14/11</div><div class="event-title">Lazer do Ministério - Intercessão Jovem</div></div>
-                    <div class="event-card"><div class="event-date">Sábado - 14/11</div><div class="event-title">Novena de Natal e Convivência - Intercessão Jovem</div></div>
-                    <div class="event-card"><div class="event-date">Domingo - 15/11</div><div class="event-title">Ação SOS de Rua</div></div>
-                    <div class="event-card"><div class="event-date">Domingo - 15/11</div><div class="event-title">Dia Mundial do Pobre</div></div>
-                    <div class="event-card"><div class="event-date">Sexta - 20/11</div><div class="event-title">Curso de Consagração à Nossa Senhora das Graças (Online)</div></div>
-                    <div class="event-card"><div class="event-date">Sábado - 21/11</div><div class="event-title">Aulas de violão</div></div>
-                    <div class="event-card"><div class="event-date">Segunda - 23/11</div><div class="event-title">Adoração Ininterrupta</div></div>
-                    <div class="event-card"><div class="event-date">Sexta - 27/11</div><div class="event-title">Missa de Consagração à Nossa das Graças</div></div>
-                    <div class="event-card"><div class="event-date">Sexta - 27/11</div><div class="event-title">Vigília Pastoreio de Adultos</div></div>
-                    <div class="event-card"><div class="event-date">Sábado - 28/11</div><div class="event-title">Aulas de violão</div></div>
-                    <div class="event-card"><div class="event-date">Sábado - 28/11</div><div class="event-title">Philia (Cancelado)</div></div>
-                    <div class="event-card"><div class="event-date">Sábado - 28/11</div><div class="event-title">SVES Jovem</div></div>
-                </div>
-            </div>
+            <script>
+                const diasSemana = [
+                    "Segunda (Início 19h)", "Terça", "Quarta", "Quinta", "Sexta", "Sábado", "Domingo", "Segunda (Término 19h)"
+                ];
 
-            <!-- DEZEMBRO 2026 -->
-            <div id="dez-2026" class="month-section">
-                <div class="month-header-title">Dezembro de 2026 <span class="event-count">13 eventos</span></div>
-                <div class="event-list">
-                    <div class="event-card"><div class="event-date">Terça - 1/12</div><div class="event-title">Férias da CV</div></div>
-                    <div class="event-card"><div class="event-date">Sábado - 5/12</div><div class="event-title">Aulas de violão</div></div>
-                    <div class="event-card"><div class="event-date">Domingo - 6/12</div><div class="event-title">10º Encontro Vocacional (Vocacional Aberto - Confraternização)</div></div>
-                    <div class="event-card"><div class="event-date">Segunda - 7/12</div><div class="event-title">Lazer Projeto Artes</div></div>
-                    <div class="event-card"><div class="event-date">Sexta - 11/12</div><div class="event-title">Missa por cura</div></div>
-                    <div class="event-card"><div class="event-date">Sábado - 12/12</div><div class="event-title">Vigília Jovem - Advento + Acamps Regional 2027</div></div>
-                    <div class="event-card"><div class="event-date">Sábado - 12/12</div><div class="event-title">Ação SOS de Rua</div></div>
-                    <div class="event-card"><div class="event-date">Segunda - 14/12</div><div class="event-title">Adoração Ininterrupta</div></div>
-                    <div class="event-card"><div class="event-date">Quarta - 16/12</div><div class="event-title">Missa por cura</div></div>
-                    <div class="event-card"><div class="event-date">Sábado - 19/12</div><div class="event-title">Filho de Deus Menino Meu (Jubileu 25 anos)</div></div>
-                    <div class="event-card"><div class="event-date">Sábado - 25/12</div><div class="event-title">Natal</div></div>
-                    <div class="event-card"><div class="event-date">Domingo - 26/12</div><div class="event-title">Recesso CAL</div></div>
-                    <div class="event-card"><div class="event-date">Quinta - 31/12</div><div class="event-title">Reveillon da Paz (Jubileu 25 anos)</div></div>
-                </div>
-            </div>
+                const horarios = [
+                    { t: "02:00 as 03:00", vigilia: true }, { t: "03:00 as 04:00", vigilia: true },
+                    { t: "04:00 as 05:00", vigilia: true }, { t: "05:00 as 06:00", vigilia: true },
+                    { t: "06:00 as 07:00", vigilia: false }, { t: "07:00 as 08:00", vigilia: false },
+                    { t: "08:00 as 09:00", vigilia: false }, { t: "09:00 as 10:00", vigilia: false },
+                    { t: "10:00 as 11:00", vigilia: false }, { t: "11:00 as 12:00", vigilia: false },
+                    { t: "12:00 as 13:00", vigilia: false }, { t: "13:00 as 14:00", vigilia: false },
+                    { t: "14:00 as 15:00", vigilia: false }, { t: "15:00 as 16:00", vigilia: false },
+                    { t: "16:00 as 17:00", vigilia: false }, { t: "17:00 as 18:00", vigilia: false },
+                    { t: "18:00 as 19:00", vigilia: false }, { t: "19:00 as 20:00", vigilia: false },
+                    { t: "20:00 as 21:00", vigilia: false }, { t: "21:00 as 22:00", vigilia: false },
+                    { t: "22:00 as 23:00", vigilia: true }, { t: "23:00 as 00:00", vigilia: true },
+                    { t: "00:00 as 01:00", vigilia: true }, { t: "01:00 as 02:00", vigilia: true }
+                ];
 
-            <!-- JANEIRO 2027 -->
-            <div id="jan-2027" class="month-section">
-                <div class="month-header-title">Janeiro de 2027 <span class="event-count">4 eventos</span></div>
-                <div class="event-list">
-                    <div class="event-card"><div class="event-date">Sábado - 2/01</div><div class="event-title">Dê suas férias pra Jesus</div></div>
-                    <div class="event-card"><div class="event-date">Sexta - 8/01</div><div class="event-title">Missa por cura</div></div>
-                    <div class="event-card"><div class="event-date">Domingo - 10/01</div><div class="event-title">Vocacional Aberto</div></div>
-                    <div class="event-card"><div class="event-date">Quinta - 14/01</div><div class="event-title">Acamp´s</div></div>
-                </div>
-            </div>
+                // Função auxiliar para verificar se o horário está bloqueado na coluna correspondente
+                function isHorarioBloqueado(colIndex, horaTexto) {
+                    // Extrai a hora inicial (ex: "02:00 as 03:00" -> hora 2)
+                    let horaInicio = parseInt(horaTexto.split(':')[0]);
 
-            <!-- FEVEREIRO 2027 -->
-            <div id="fev-2027" class="month-section">
-                <div class="month-header-title">Fevereiro de 2027 <span class="event-count">4 eventos</span></div>
-                <div class="event-list">
-                    <div class="event-card"><div class="event-date">Domingo - 31/01</div><div class="event-title">Corrida da Paz - Shalom Guarulhos 25 Anos</div></div>
-                    <div class="event-card"><div class="event-date">Domingo - 7/02</div><div class="event-title">RENASCER</div></div>
-                    <div class="event-card"><div class="event-date">Sexta - 12/02</div><div class="event-title">Missa por cura</div></div>
-                    <div class="event-card"><div class="event-date">Sábado - 13/02</div><div class="event-title">Retiro do Colegiado</div></div>
-                </div>
-            </div>
+                    // Coluna 0: Segunda (Início 19h). Horários anteriores a 19h (00:00 até 18:00) devem ser bloqueados.
+                    if (colIndex === 0) {
+                        if (horaInicio < 19) return true;
+                    }
+                    // Coluna 7: Segunda (Término 19h). Horários de 19:00 em diante (19:00 até 23:00 e 00:00 a 02:00) devem ser bloqueados, pois encerra às 19h.
+                    if (colIndex === 7) {
+                        if (horaInicio >= 19 || horaInicio < 2) return true;
+                    }
+                    return false;
+                }
 
-            <!-- MARÇO 2027 -->
-            <div id="mar-2027" class="month-section">
-                <div class="month-header-title">Março de 2027 <span class="event-count">3 eventos</span></div>
-                <div class="event-list">
-                    <div class="event-card"><div class="event-date">Sábado - 6/03</div><div class="event-title">Assembléia Jovem</div></div>
-                    <div class="event-card"><div class="event-date">Sexta - 12/03</div><div class="event-title">Missa por cura</div></div>
-                    <div class="event-card"><div class="event-date">Sábado - 20/03</div><div class="event-title">Retiro de Ingresso P1/D1</div></div>
-                </div>
-            </div>
-
-            <!-- ABRIL 2027 -->
-            <div id="abr-2027" class="month-section">
-                <div class="month-header-title">Abril de 2027 <span class="event-count">1 evento</span></div>
-                <div class="event-list">
-                    <div class="event-card"><div class="event-date">Sexta - 9/04</div><div class="event-title">Missa por cura</div></div>
-                </div>
-            </div>
-
-            <!-- MAIO 2027 -->
-            <div id="mai-2027" class="month-section">
-                <div class="month-header-title">Maio de 2027 <span class="event-count">1 evento</span></div>
-                <div class="event-list">
-                    <div class="event-card"><div class="event-date">Sexta - 14/05</div><div class="event-title">Missa por cura</div></div>
-                </div>
-            </div>
-
-            <!-- JUNHO 2027 -->
-            <div id="jun-2027" class="month-section">
-                <div class="month-header-title">Junho de 2027 <span class="event-count">1 evento</span></div>
-                <div class="event-list">
-                    <div class="event-card"><div class="event-date">Sexta - 11/06</div><div class="event-title">Missa por cura</div></div>
-                </div>
-            </div>
-
-            <!-- JULHO 2027 -->
-            <div id="jul-2027" class="month-section">
-                <div class="month-header-title">Julho de 2027 <span class="event-count">1 evento</span></div>
-                <div class="event-list">
-                    <div class="event-card"><div class="event-date">Sexta - 9/07</div><div class="event-title">Missa por cura</div></div>
-                </div>
-            </div>
-
-            <!-- AGOSTO 2027 -->
-            <div id="ago-2027" class="month-section">
-                <div class="month-header-title">Agosto de 2027 <span class="event-count">1 evento</span></div>
-                <div class="event-list">
-                    <div class="event-card"><div class="event-date">Sexta - 13/08</div><div class="event-title">Missa por cura</div></div>
-                </div>
-            </div>
-
-            <!-- SETEMBRO 2027 -->
-            <div id="set-2027" class="month-section">
-                <div class="month-header-title">Setembro de 2027 <span class="event-count">1 evento</span></div>
-                <div class="event-list">
-                    <div class="event-card"><div class="event-date">Sexta - 10/09</div><div class="event-title">Missa por cura</div></div>
-                </div>
-            </div>
-
-            <!-- OUTUBRO 2027 -->
-            <div id="out-2027" class="month-section">
-                <div class="month-header-title">Outubro de 2027 <span class="event-count">1 evento</span></div>
-                <div class="event-list">
-                    <div class="event-card"><div class="event-date">Sexta - 8/10</div><div class="event-title">Missa por cura</div></div>
-                </div>
-            </div>
-
-            <!-- NOVEMBRO 2027 -->
-            <div id="nov-2027" class="month-section">
-                <div class="month-header-title">Novembro de 2027 <span class="event-count">2 eventos</span></div>
-                <div class="event-list">
-                    <div class="event-card"><div class="event-date">Quinta - 4/11</div><div class="event-title">Aniversário do Moysés</div></div>
-                    <div class="event-card"><div class="event-date">Sexta - 12/11</div><div class="event-title">Missa por cura</div></div>
-                </div>
-            </div>
-
-            <!-- DEZEMBRO 2027 -->
-            <div id="dez-2027" class="month-section">
-                <div class="month-header-title">Dezembro de 2027 <span class="event-count">1 evento</span></div>
-                <div class="event-list">
-                    <div class="event-card"><div class="event-date">Sexta - 10/12</div><div class="event-title">Missa por cura</div></div>
-                </div>
-            </div>
-            
-            <div id="noResults" class="no-results">Nenhum evento encontrado para esta pesquisa.</div>
+                document.write(meses.map((m, index) => `
+                    <div id="${m.id}" class="month-section ${index === 0 ? 'active' : ''}">
+                        <h2 style="font-size:18px; color:var(--primary); margin-bottom:15px;">${m.nome}</h2>
+                        <div class="table-responsive">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>HORÁRIO</th>
+                                        ${diasSemana.map((d, cIdx) => `
+                                            <th>
+                                                ${d}
+                                                <span class="vagas-counter" id="vagas-${m.id}-${cIdx}">... horários disponíveis</span>
+                                            </th>
+                                        `).join('')}
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${horarios.map((h, rIdx) => `
+                                        <tr class="${h.vigilia ? 'vigilia-row' : ''}">
+                                            <td class="time-col">${h.t}</td>${diasSemana.map((_, cIdx) => {
+                                                let bloqueado = isHorarioBloqueado(cIdx, h.t);
+                                                if (bloqueado) {
+                                                    return `<td class="slot-cell blocked-cell">Indisponível</td>`;
+                                                } else {
+                                                    return `
+                                                        <td class="slot-cell" onclick="handleCellClick(event, '${m.id}', ${rIdx}, ${cIdx})">
+                                                            <div class="participant-tags" id="cell-${m.id}-${rIdx}-${cIdx}"></div>
+                                                        </td>
+                                                    `;
+                                                }
+                                            }).join('')}
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                `).join(''));
+            </script>
         </div>
     </div>
 
     <script>
+        // CONFIGURAÇÃO DO FIREBASE (Banco de dados em nuvem)
+        const firebaseConfig = {
+            apiKey: "AIzaSyAVe893qcka8vhZQs2bRR4JhsFB4IeUnYU",
+            authDomain: "adoracao-vigilia.firebaseapp.com",
+            projectId: "adoracao-vigilia",
+            storageBucket: "adoracao-vigilia.firebasestorage.app",
+            messagingSenderId: "87172633281",
+            appId: "1:87172633281:web:cc32b0c2c70551bb1d7a40"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        let meuIdUsuario = localStorage.getItem('missao_gru_userid');
+        if (!meuIdUsuario) {
+            meuIdUsuario = 'user_' + Math.random().toString(36).substr(2, 9);
+            localStorage.setItem('missao_gru_userid', meuIdUsuario);
+        }
+
+        let cacheDados = {};
+
+        db.collection("escala_adoracao").doc("dados_completos").onSnapshot((doc) => {
+            if (doc.exists) {
+                cacheDados = doc.data() || {};
+                renderizarDados();
+            }
+        });
+
+        function renderizarDados() {
+            meses.forEach(m => {
+                let mesData = cacheDados[m.id] || {};
+                
+                // Calcula o total de horários VÁLIDOS (não bloqueados) por coluna
+                let totalHorariosValidosPorColuna = {};
+                let preenchidosPorColuna = {};
+
+                diasSemana.forEach((_, cIdx) => {
+                    preenchidosPorColuna[cIdx] = 0;
+                    let validosCount = 0;
+                    horarios.forEach(h => {
+                        if (!isHorarioBloqueado(cIdx, h.t)) validosCount++;
+                    });
+                    totalHorariosValidosPorColuna[cIdx] = validosCount;
+                });
+
+                horarios.forEach((h, rIdx) => {
+                    diasSemana.forEach((_, cIdx) => {
+                        if (isHorarioBloqueado(cIdx, h.t)) return;
+
+                        let container = document.getElementById(`cell-${m.id}-${rIdx}-${cIdx}`);
+                        if (!container) return;
+                        
+                        container.innerHTML = '';
+                        let key = `${rIdx}_${cIdx}`;
+                        let itens = mesData[key] || [];
+
+                        if (itens.length > 0) {
+                            preenchidosPorColuna[cIdx]++;
+                        }
+
+                        itens.forEach(item => {
+                            let tag = document.createElement('div');
+                            tag.className = 'tag';
+
+                            let span = document.createElement('span');
+                            span.innerText = item.texto;
+
+                            tag.appendChild(span);
+
+                            if (item.autor === meuIdUsuario) {
+                                let btnRemover = document.createElement('button');
+                                btnRemover.innerText = '×';
+                                btnRemover.title = 'Remover meu agendamento';
+                                btnRemover.onclick = function(e) {
+                                    e.stopPropagation();
+                                    removerItem(m.id, rIdx, cIdx, item.id);
+                                };
+                                tag.appendChild(btnRemover);
+                            }
+
+                            container.appendChild(tag);
+                        });
+                    });
+                });
+
+                // Atualiza os contadores de horários disponíveis considerando apenas as células válidas
+                diasSemana.forEach((_, cIdx) => {
+                    let spanVagas = document.getElementById(`vagas-${m.id}-${cIdx}`);
+                    if (spanVagas) {
+                        let totalValidos = totalHorariosValidosPorColuna[cIdx];
+                        let preenchidos = preenchidosPorColuna[cIdx];
+                        let disponiveis = totalValidos - preenchidos;
+                        if (disponiveis < 0) disponiveis = 0;
+
+                        spanVagas.innerText = `${disponiveis} horári${disponiveis === 1 ? 'o disponível' : 'os disponíveis'}`;
+                    }
+                });
+            });
+            atualizarBloqueioMeses();
+        }
+
+        function handleCellClick(event, monthId, rIdx, cIdx) {
+            if (event.target.tagName === 'BUTTON') return;
+
+            let nome = prompt("Digite seu nome ou o da sua célula/grupo para este horário:");
+            if (nome && nome.trim() !== "") {
+                if (!cacheDados[monthId]) cacheDados[monthId] = {};
+                let key = `${rIdx}_${cIdx}`;
+                if (!cacheDados[monthId][key]) cacheDados[monthId][key] = [];
+
+                cacheDados[monthId][key].push({
+                    id: 'item_' + Math.random().toString(36).substr(2, 9),
+                    texto: nome.trim(),
+                    autor: meuIdUsuario
+                });
+
+                salvarNoFirebase();
+            }
+        }
+
+        function removerItem(monthId, rIdx, cIdx, itemId) {
+            let key = `${rIdx}_${cIdx}`;
+            if (cacheDados[monthId] && cacheDados[monthId][key]) {
+                cacheDados[monthId][key] = cacheDados[monthId][key].filter(item => item.id !== itemId);
+                salvarNoFirebase();
+            }
+        }
+
+        function salvarNoFirebase() {
+            db.collection("escala_adoracao").doc("dados_completos").set(cacheDados)
+              .catch((error) => {
+                  console.error("Erro ao salvar no banco de dados: ", error);
+                  alert("Erro ao sincronizar. Verifique a conexão.");
+              });
+        }
+
+        function atualizarBloqueioMeses() {
+            const agora = new Date();
+            const anoAtual = agora.getFullYear();
+            const mesAtual = agora.getMonth();
+
+            meses.forEach((m) => {
+                let btn = document.getElementById(`btn-${m.id}`);
+                if (!btn) return;
+
+                let liberado = (m.ano < anoAtual) || (m.ano === anoAtual && m.mesIndex <= mesAtual);
+                let mesData = cacheDados[m.id] || {};
+                let temPreenchimento = Object.keys(mesData).some(k => mesData[k] && mesData[k].length > 0);
+
+                if (liberado || temPreenchimento) {
+                    btn.disabled = false;
+                    btn.innerText = m.nome.split(' ')[0] + ' ' + m.ano;
+                } else {
+                    btn.disabled = true;
+                    btn.innerText = '🔒 ' + m.nome.split(' ')[0] + ' ' + m.ano;
+                }
+            });
+        }
+
         function showMonth(monthId, btnElement) {
-            // Limpa a busca para evitar conflitos de exibição
-            document.getElementById('searchBox').value = '';
-            
-            // Oculta todas as seções de meses
+            if (btnElement.disabled) return;
+
             document.querySelectorAll('.month-section').forEach(section => {
                 section.classList.remove('active');
-                section.style.display = 'none';
-                section.querySelectorAll('.event-card').forEach(card => card.style.display = 'flex');
             });
-
-            // Remove o destaque de todos os botões do menu superior
             document.querySelectorAll('.month-btn').forEach(btn => {
                 btn.classList.remove('active');
             });
 
-            // Exibe estritamente o mês selecionado
-            const targetSection = document.getElementById(monthId);
-            if (targetSection) {
-                targetSection.classList.add('active');
-                targetSection.style.display = 'block';
-            }
-            
-            // Ativa visualmente o botão clicado
-            if (btnElement) {
-                btnElement.classList.add('active');
-            }
-            
-            document.getElementById('noResults').style.display = 'none';
+            document.getElementById(monthId).classList.add('active');
+            btnElement.classList.add('active');
         }
 
-        function filterEvents() {
-            let query = document.getElementById('searchBox').value.toLowerCase().trim();
-            let sections = document.querySelectorAll('.month-section');
-            let noResults = document.getElementById('noResults');
-            let totalVisible = 0;
-
-            if (query === "") {
-                // Se a barra de busca for limpa, retorna à aba que estava ativa no menu superior
-                noResults.style.display = 'none';
-                let activeBtn = document.querySelector('.month-btn.active');
-                let activeMonthId = activeBtn ? activeBtn.getAttribute('onclick').match(/'([^']+)'/)[1] : 'nov-2026';
-                
-                sections.forEach(sec => {
-                    if (sec.id === activeMonthId) {
-                        sec.classList.add('active');
-                        sec.style.display = 'block';
-                    } else {
-                        sec.classList.remove('active');
-                        sec.style.display = 'none';
-                    }
-                    sec.querySelectorAll('.event-card').forEach(card => card.style.display = 'flex');
-                });
-                return;
-            }
-
-            // Quando houver termo de busca, vasculha e exibe os resultados em todos os meses
-            sections.forEach(sec => {
-                let cards = sec.querySelectorAll('.event-card');
-                let hasVisibleCardInMonth = false;
-
-                cards.forEach(card => {
-                    let text = card.innerText.toLowerCase();
-                    if (text.includes(query)) {
-                        card.style.display = 'flex';
-                        hasVisibleCardInMonth = true;
-                        totalVisible++;
-                    } else {
-                        card.style.display = 'none';
-                    }
-                });
-
-                if (hasVisibleCardInMonth) {
-                    sec.classList.add('active');
-                    sec.style.display = 'block';
-                } else {
-                    sec.classList.remove('active');
-                    sec.style.display = 'none';
-                }
-            });
-
-            noResults.style.display = totalVisible === 0 ? 'block' : 'none';
-        }
-
-        // Inicializa forçando a exibição correta apenas do primeiro mês padrão (Nov 2026)
         window.onload = function() {
-            document.querySelectorAll('.month-section').forEach(sec => {
-                if(!sec.classList.contains('active')) {
-                    sec.style.display = 'none';
-                }
-            });
+            atualizarBloqueioMeses();
         };
     </script>
 </body>
